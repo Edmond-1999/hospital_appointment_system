@@ -120,6 +120,7 @@ dependencies = [
     { name = "automium-web" },
     { name = "fastapi" },
     { name = "mysql-connector-python" },
+    { name = "password" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "uvicorn", extra = ["standard"] },
@@ -130,6 +131,7 @@ requires-dist = [
     { name = "automium-web", specifier = ">=0.1.1" },
     { name = "fastapi", specifier = ">=0.141.1" },
     { name = "mysql-connector-python", specifier = ">=26.7.0" },
+    { name = "password", specifier = ">=0.2" },
     { name = "pydantic", specifier = ">=2.13.4" },
     { name = "pydantic-settings", specifier = ">=2.15.0" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.52.4" },
@@ -295,6 +297,12 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/34/a6/946645e3c7e8feb159c97b2e8f612075e4ec08c0fb7d26d310d7e1b0e22c/mysql_connector_python-26.7.0-cp314-cp314-win_amd64.whl", hash = "sha256:a4eac2b4bcbf18fbaab736b5c3996425728472fea7b3d71a8c7056aa6349471f", size = 18207344, upload-time = "2026-07-29T10:18:47.926Z" },
     { url = "https://files.pythonhosted.org/packages/ff/01/07efeb3e3fc730f945af40ddf1f4c879c13945b193a94eba8e642c0d4176/mysql_connector_python-26.7.0-py2.py3-none-any.whl", hash = "sha256:43ee453b53556f690e4f4b795d3f17a1c6d4b45f729657bb0d999c8dfc9261d5", size = 480733, upload-time = "2026-07-29T10:18:49.777Z" },
 ]
+
+[[package]]
+name = "password"
+version = "0.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/81/a3/4e83ff416b1d544da276a0a95ce469c0ec7b28f68a68cf61c9a987dda134/password-0.2.zip", hash = "sha256:c1502353c1c5c0541c0625b4f71255eb1b06e72b8146963a08ea3aa340c0bf53", size = 3816, upload-time = "2013-11-17T18:28:13.514Z" }
 
 [[package]]
 name = "pydantic"

@@ -1,31 +1,21 @@
 from abc import ABC, abstractmethod
+from uuid import UUID
+
 from app.models.patient import Patient
-from typing import List
 
 class PatientRepository(ABC):
+    @abstractmethod
+    def add_patient(self, patient: Patient) -> Patient: ...
 
     @abstractmethod
-    def add_patient(self, patient: Patient) -> Patient:
-       ...
-    @abstractmethod
-    def get_patient(self, patient_id: int) -> Patient | None:
-        ...
+    def get_patient(self, patient_id: UUID) -> Patient | None: ...
 
     @abstractmethod
-    def get_by_email(self, email: str) -> Patient | None:
-        ...
+    def list_patients(self) -> list[Patient]: ...
 
     @abstractmethod
-    def list_patients(self, ) -> list[Patient]:
-        ...
+    def update_patient(self, patient_id: UUID, data: dict) -> Patient | None: ...
 
     @abstractmethod
-    def update(self, patient_id: int, data: dict) -> Patient:
-        ...
-
-    @abstractmethod
-    def delete(self, patient_id: int) -> bool:
-        ...
-
-
+    def delete_patient(self, patient_id: UUID) -> bool: ...
 

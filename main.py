@@ -1,6 +1,10 @@
 from fastapi import FastAPI
-from app.controllers.patient_controller import router as patient_router
+from app.controllers import auth_controller, patient_controller
 
-app = FastAPI(title="Hospital Appointment System API")
+app = FastAPI(
+    title="Hospital Appointment System API",
+    version="1.0.0",
+)
 
-app.include_router(patient_router)
+app.include_router(auth_controller.router)
+app.include_router(patient_controller.router)
