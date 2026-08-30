@@ -2,26 +2,68 @@ from datetime import datetime
 from uuid import UUID
 
 from app.models.appointment import Appointment
-from app.models.enums import AppointmentStatus
-from repositories.appointment_repository import AppointmentRepository
-from repositories.in_memory_repository import InMemoryRepository
+from app.repositories.appointment_repository import AppointmentRepository
+from app.repositories.doctor_repository import DoctorRepository
 
 
 class AppointmentService:
-    def __init__(self, appointment_repository: AppointmentRepository):
+    def __init__(self, appointment_repository: AppointmentRepository, doctor_repository: DoctorRepository):
         self.appointment_repository = appointment_repository
+        self.doctor_repository = doctor_repository
 
     def create_appointment(self, patient_id: UUID, department_id:UUID, appointment_datetime: datetime ) -> Appointment:
-        pass
+        doctors = self.doctor_repository.find_by_department(department_id)
+
+        for doctor in doctors:
+            appointment = self.appointment_repository.find_doctor_by_datetime(doctor.id, appointment_datetime)
+            if appointment is None:
+                new_appointment = Appointment( patient_id = patient_id, doctor_id = doctor.id, department_id = department_id, appointment_datetime = appointment_datetime)
+
+                return self.appointment_repository.create(new_appointment)
+
+        raise ValueError("No doctor is available at this time")
 
     def get_patient_appointments(self, patient_id: UUID) -> list[Appointment]:
-        pass
+        return self.appointment_repository.find_by_patient(patient_id)
 
     def cancel_appointment(self, appointment_id: UUID, user_id: UUID) -> None:
-        pass
+        appointment = self.appointment_repository.get_by_id(appointment_id)
+
+        if appointment is None:
+            raise ValueError(f"No appointment with id {appointment_id}")
+        if appointment.patient_id != user_id:
+            raise ValueError(f"You can't cancel an appointment with id {appointment_id}")
+
+        appointment.cancel()
+
+        self.appointment_repository.update(appointment_id, appointment)
+
+
 
     def confirm_appointment(self, appointment_id: UUID, doctor_id:UUID) -> None:
-        pass
+        appointment = self.appointment_repository.get_by_id(appointment_id)
+
+        if appointment is None:
+            raise ValueError(f"No appointment with id {appointment_id}")
+
+        if appointment.doctor_id != doctor_id:
+            raise ValueError(f"You can't confirm an appointment with id {appointment_id}")
+
+        appointment.confirm()
+
+        self.appointment_repository.update(appointment_id, appointment)
+
+
 
     def complete_appointment(self, appointment_id: UUID, doctor_id :UUID) -> None:
-        pass
+        appointment = self.appointment_repository.get_by_id(appointment_id)
+
+        if appointment is None:
+            raise ValueError(f"No appointment with id {appointment_id}")
+
+        if appointment.doctor_id != doctor_id:
+            raise ValueError(f"You can't complete an appointment with id {appointment_id}")
+
+        appointment.complete()
+
+        self.appointment_repository.update(appointment_id, appointment)

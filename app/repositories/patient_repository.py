@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from models.patient import Patient
-from repositories.in_memory_repository import InMemoryRepository
+from app.models.patient import Patient
+from app.repositories.in_memory_repository import InMemoryRepository
 
 
 class PatientRepository(InMemoryRepository[Patient]):
