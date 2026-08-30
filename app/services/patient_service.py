@@ -1,88 +1,69 @@
-from typing import Optional
+from uuid import UUID, uuid4
+
+from app.schemas.patient_schema import PatientCreate, PatientUpdate
+from app.exceptions import ConflictError, NotFoundError
 from app.models.patient import Patient
+from app.models.user import User
+from app.models.user_role import UserRole
 from app.repositories.patient_repository import PatientRepository
-
-
-class PatientNotFoundError(Exception):
-    pass
-
-class DuplicateEmailError(Exception):
-    pass
-
-class InvalidCredentialsError(Exception):
-    pass
-
+from app.repositories.user_repository import UserRepository
 
 
 class PatientService:
+    def __init__(self, repository: PatientRepository, user_repository: UserRepository):
+        self.repository = repository
+        self.user_repository = user_repository
 
-    def __init__(self, repository: PatientRepository):
-        self._repository = repository
+    def create_patient(self, payload: PatientCreate) -> Patient:
+        if self.user_repository.get_user_by_email(payload.email):
+            raise ConflictError(f"An account with email '{payload.email}' already exists")
 
-    # ---------- registration / lookup ----------
-    def register_patient(
-        self,
-        fullname: str,
-        email: str,
-        phone: str,
-        password: str,
-        date_of_birth: str,
-        gender: str,
-        address: str,
-        reason: str,
-    ) -> Patient:
-        if self._repository.get_by_email(email) is not None:
-            raise DuplicateEmailError(f"A patient with email '{email}' already exists.")
+        user = User(
+            id=uuid4(),
+            fullname=payload.fullname,
+            email=payload.email,
+            phone=payload.phone,
+            password=payload.password,
+            role=UserRole.PATIENT,
+        )
+        self.user_repository.add_user(user)
 
         patient = Patient(
-            fullname=fullname,
-            email=email,
-            phone=phone,
-            password=password,
-            date_of_birth=date_of_birth,
-            gender=gender,
-            address=address,
-            reason=reason,
+            id=user.id,
+            role=UserRole.PATIENT,
+            fullname=user.fullname,
+            email=user.email,
+            phone=user.phone,
+            password=user.password,
+            date_of_birth=payload.date_of_birth,
+            gender=payload.gender,
+            address=payload.address,
+            reason=payload.reason,
         )
-        return self._repository.add_patient(patient)
+        return self.repository.add_patient(patient)
 
-    def get_patient(self, patient_id: int) -> Patient:
-        patient = self._repository.get_patient(patient_id)
+    def get_patient(self, patient_id: UUID) -> Patient:
+        patient = self.repository.get_patient(patient_id)
         if patient is None:
-            raise PatientNotFoundError(f"No patient found with id {patient_id}")
+            raise NotFoundError(f"Patient {patient_id} not found")
         return patient
 
     def list_patients(self) -> list[Patient]:
-        return self._repository.list_patients()
+        return self.repository.list_patients()
 
-    # ---------- mutation ----------
-    def update_patient_profile(self, patient_id: int, **fields) -> Patient:
+    def update_patient(self, patient_id: UUID, payload: PatientUpdate) -> Patient:
         patient = self.get_patient(patient_id)
-        patient.update_profile(**fields)
-        return self._repository.update(patient)
+        email = payload.email
+        if email is not None and payload.email != patient.email:
+            if self.user_repository.get_user_by_email(email):
+                raise ConflictError(f"An account with email '{payload.email}' already exists")
 
-    def delete_patient(self, patient_id: int) -> None:
-        if not self._repository.delete(patient_id):
-            raise PatientNotFoundError(f"No patient found with id {patient_id}")
+        data = payload.model_dump(exclude_unset=True)
+        updated = self.repository.update_patient(patient_id, data)
+        if updated is None:
+            raise NotFoundError(f"Patient {patient_id} not found")
+        return updated
 
-    # ---------- appointments ----------
-    def book_appointment(self, patient_id: int, appointment) -> Patient:
-        patient = self.get_patient(patient_id)
-        patient.book_appointment(appointment)
-        return self._repository.update(patient)
-
-    def view_appointments(self, patient_id: int) -> list:
-        patient = self.get_patient(patient_id)
-        return patient.view_appointments()
-
-    def cancel_appointment(self, patient_id: int, appointment_id: int) -> Patient:
-        patient = self.get_patient(patient_id)
-        patient.cancel_appointment(appointment_id)
-        return self._repository.update(patient)
-
-    # ---------- auth ----------
-    def authenticate(self, email: str, password: str) -> Patient:
-        patient = self._repository.get_by_email(email)
-        if patient is None or not patient.login(password):
-            raise InvalidCredentialsError("Invalid email or password.")
-        return patient
+    def delete_patient(self, patient_id: UUID) -> None:
+        self.get_patient(patient_id)
+        self.repository.delete_patient(patient_id)
