@@ -1,30 +1,19 @@
-from uuid import UUID, uuid4
-from abc import ABC, abstractmethod
+from uuid import uuid4, UUID
+from pydantic import BaseModel, Field
 
-from pydantic import BaseModel, Field, ConfigDict
+from app.models.enums import UserRole
 
 class User(BaseModel):
-    # def __init__(self, _id: int, fullname: str, email: str, phone: str, password: str):
     id: UUID = Field(default_factory=uuid4)
-    fullname = str
-    email = str
-    phone = str
-    password = str
+    fullname: str = Field(...)
+    email: str = Field(...)
+    phone: str = Field(...)
+    password: str = Field(...)
+    role: UserRole = Field(...)
 
-    def login(self, password: str) -> bool:
-        return password == self.password
+    def login(self, email: str, password: str):
+        return self.email == email.lower() and self.password == password
 
-    def logout(self) -> None:
-        print(f"{self.fullname} logged out.")
+    def logout(self, email:str) -> None:
+        return self.email.lower() == email.lower()
 
-    def update_profile(self, **fields) -> None:
-        for key, value in fields.items():
-            if hasattr(self, key):
-                setattr(self, key, value)
-
-
-    def role(self) -> str:
-        raise NotImplementedError
-
-    def __repr__(self):
-        return f"<{self.role()} id={self.id} name={self.fullname!r}>"

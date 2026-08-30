@@ -1,16 +1,7 @@
-from fastapi import Depends
+from app.repositories.user_repository import UserRepository
+from app.services.user_service import UserService
 
-from app.repositories.patient_repository import PatientRepository
-from app.repositories.in_memory_repository import InMemoryPatientRepository
-from app.services.patient_service import PatientService
+user_repository = UserRepository()
 
-
-_repository = InMemoryPatientRepository()
-
-def get_patient_repository() -> PatientRepository:
-    return _repository
-
-def get_patient_service(
-        repository: PatientRepository = Depends(get_patient_repository),
-) -> PatientService:
-    return PatientService(repository)
+def get_user_service() -> UserService:
+    return UserService(user_repository)

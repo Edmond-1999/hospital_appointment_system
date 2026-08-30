@@ -1,32 +1,21 @@
-from pydantic import BaseModel, Field
+from datetime import datetime
+from uuid import UUID
+
 from app.models.user import User
-from app.models.enums import AppointmentStatus
-from uuid import UUID, uuid4
-from datetime import datetime, timezone
 
 class Patient(User):
-        # def __init__(self, _id: int, fullname: str, email: str, phone: str, password: str,
-        #              date_of_birth: str, gender: str, address: str, reason: str):
-    id = int
-    date_of_birth = str
-    appointment_id = str
-    appointment_status = str
-    gender = str
-    address = str
-    reason = str
-    appointments = str
+    date_of_birth: datetime
+    gender: str
+    address: str
 
-    def role(self) -> str:
-        return "Patient"
-
-    def book_appointment(self, appointment) -> None:
-        self.appointments.append(appointment)
+    def book_appointment(self, department_id:UUID, appointment_date: datetime) -> None:
+        pass
 
     def view_appointments(self) -> list:
-        return self.appointments
+        pass
 
-    def cancel_appointment(self, appointment_id: int) -> None:
-        self.appointments = [
-            a for a in self.appointments if a.appointment_id != appointment_id
-        ]
+    # def view_appointments(self) -> list:
+    #     pass
 
+    def cancel_appointment(self, appointment_id:UUID) -> None:
+        pass
