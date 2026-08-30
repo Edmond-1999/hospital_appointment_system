@@ -13,6 +13,9 @@ import os
 from contextlib import contextmanager
 from typing import Any, Iterator
 
+from dotenv import load_dotenv
+load_dotenv()
+
 def settings() -> dict:
     return {
         "host": os.getenv("DB_HOST", "localhost"),
