@@ -19,26 +19,26 @@ class PatientService:
             raise ConflictError(f"An account with email '{payload.email}' already exists")
 
         user = User(
-            id=uuid4(),
-            fullname=payload.fullname,
-            email=payload.email,
-            phone=payload.phone,
-            password=payload.password,
-            role=UserRole.PATIENT,
+            id = uuid4(),
+            fullname = payload.fullname,
+            email = payload.email,
+            phone = payload.phone,
+            password = payload.password,
+            role = UserRole.PATIENT,
         )
         self.user_repository.add_user(user)
 
         patient = Patient(
-            id=user.id,
-            role=UserRole.PATIENT,
-            fullname=user.fullname,
-            email=user.email,
-            phone=user.phone,
-            password=user.password,
-            date_of_birth=payload.date_of_birth,
-            gender=payload.gender,
-            address=payload.address,
-            reason=payload.reason,
+            id = user.id,
+            role = UserRole.PATIENT,
+            fullname = user.fullname,
+            email = user.email,
+            phone = user.phone,
+            password = user.password,
+            date_of_birth = payload.date_of_birth,
+            gender = payload.gender,
+            address = payload.address,
+            reason = payload.reason,
         )
         return self.repository.add_patient(patient)
 
