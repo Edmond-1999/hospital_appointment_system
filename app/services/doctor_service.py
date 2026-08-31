@@ -73,7 +73,7 @@ class DoctorService:
 
         return updated
 
-    def delete_doctor(self, doctor_id: UUID) -> Doctor:
+    def delete_doctor(self, doctor_id: UUID) -> None:
         self.get_doctor(doctor_id)
 
         self.repository.delete_doctor(doctor_id)
