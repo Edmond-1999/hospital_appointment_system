@@ -24,16 +24,16 @@ class MySQLPatientRepository(PatientRepository):
         if not user or user.role != UserRole.PATIENT or not details:
             return None
         return Patient(
-            id=user.id,
-            fullname=user.fullname,
-            email=user.email,
-            phone=user.phone,
-            password=user.password,
-            role=UserRole.PATIENT,
-            date_of_birth=details["date_of_birth"],
-            gender=details["gender"],
-            address=details["address"],
-            reason=details["reason"],
+            id = user.id,
+            fullname = user.fullname,
+            email = user.email,
+            phone = user.phone,
+            password = user.password,
+            role = UserRole.PATIENT,
+            date_of_birth = details["date_of_birth"],
+            gender = details["gender"],
+            address = details["address"],
+            reason = details["reason"],
         )
 
     def add_patient(self, patient: Patient) -> Patient:
@@ -63,18 +63,18 @@ class MySQLPatientRepository(PatientRepository):
         if not patient:
             return None
 
-        user_data = {k: v for k, v in data.items()
-                     if k in {"fullname", "email", "phone", "hashed_password"}}
-        detail_data = {k: v for k, v in data.items()
-                       if k in {"date_of_birth", "gender", "address", "reason"}}
+        user_data = {key: value for key, value in data.items()
+                     if key in {"fullname", "email", "phone", "password"}}
+        detail_data = {key: value for key, value in data.items()
+                       if key in {"date_of_birth", "gender", "address", "reason"}}
 
         if user_data:
             self.users.update_user(patient_id, user_data)
 
         if detail_data:
-            values = [v for v in detail_data.values()]
+            values = [value for value in detail_data.values()]
             values.append(str(patient_id))
-            sql = ", ".join(f"{k} = %s" for k in detail_data)
+            sql = ", ".join(f"{key} = %s" for key in detail_data)
             with get_connection() as db:
                 cur = db.cursor()
                 cur.execute(f"UPDATE patients SET {sql} WHERE id = %s", values)
