@@ -7,6 +7,7 @@ from app.models.appointment_status import AppointmentStatus
 
 class BookAppointmentRequest(BaseModel):
     department:str
+    description:str
     appointment_datetime: datetime
 
 
