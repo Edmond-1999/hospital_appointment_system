@@ -2,13 +2,15 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 from pydantic import BaseModel, Field
+from sqlmodel import SQLModel
+
 from app.models.appointment_status import AppointmentStatus
 
-class Appointment(BaseModel):
+class Appointment(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid4)
     patient_id: UUID
-    doctor_id: UUID
-    department_id: str
+    doctor_name: name
+    department: str
     description: str
     appointment_datetime: datetime
     status: AppointmentStatus = AppointmentStatus.PENDING
