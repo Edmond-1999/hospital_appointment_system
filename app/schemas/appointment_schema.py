@@ -1,10 +1,16 @@
-class BookAppointmentResponse:
-    pass
+from datetime import datetime
+from uuid import UUID
+from pydantic import BaseModel
 
 
-class BookAppointmentRequest:
-    def __init__(self):
-        self.appointment_datetime = None
-        self.department_id = None
+class BookAppointmentRequest(BaseModel):
+    department_id: UUID
+    appointment_datetime: datetime
 
-    pass
+
+class BookAppointmentResponse(BaseModel):
+    id: UUID
+    patient_id: UUID
+    department_id: UUID
+    appointment_datetime: datetime
+    status: str
