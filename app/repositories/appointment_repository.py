@@ -6,3 +6,6 @@ class AppointmentRepository:
         self.session = session
 
 
+
+
+
