@@ -16,7 +16,7 @@ class AppointmentRepository:
         self.session.refresh(appointment)
         return appointment
 
-    def find_by_id(self, appointment_id: UUID) -> Optional[Appointment]:
+    def find_by_id(self, appointment_id: UUID):
         statement = select(Appointment).where(Appointment.id == appointment_id)
         return self.session.exec(statement).first()
 
