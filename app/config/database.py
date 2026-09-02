@@ -1,7 +1,4 @@
 import os
-from app.models.user import User
-from app.models.patient import Patient
-
 from sqlmodel import SQLModel, create_engine
 from urllib.parse import quote_plus
 from dotenv import load_dotenv

@@ -1,8 +1,6 @@
-from typing import Optional, List, Any, Sequence
+from typing import Optional
 from uuid import UUID
-
 from sqlmodel import Session, select
-
 from app.models.patient import Patient
 
 
@@ -11,7 +9,7 @@ class PatientRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def save(self, patient: Patient) -> Patient:
+    def create(self, patient: Patient) -> Patient:
         self.session.add(patient)
         self.session.commit()
         self.session.refresh(patient)
@@ -19,26 +17,28 @@ class PatientRepository:
 
     def find_by_id(
         self,
-        patient_id: UUID
+        user_id: UUID
     ) -> Optional[Patient]:
         statement = select(Patient).where(
-            Patient.id == patient_id
+            Patient.user_id == user_id
         )
 
         return self.session.exec(statement).first()
 
-    def find_by_email(
-        self,
-        email: str
-    ) -> Optional[Patient]:
-        statement = select(Patient).where(
-            Patient.email == email
-        )
 
-        return self.session.exec(statement).first()
+    def find_all(self) -> list[Patient]:
+        statement = select(Patient)
+        return list(self.session.exec(statement).all())
 
-    def exists_by_email(self, email: str) -> bool:
-        return self.find_by_email(email) is not None
+    def update(self, patient: Patient, updates: dict) -> Patient:
+        for field, value in updates.items():
+            setattr(patient, field, value)
 
-    def list(self) -> Sequence[Any]:
-        return self.session.exec(select(Patient)).all()
+        self.session.add(patient)
+        self.session.commit()
+        self.session.refresh(patient)
+        return patient
+
+    def delete(self, patient: Patient) -> None:
+        self.session.delete(patient)
+        self.session.commit()
