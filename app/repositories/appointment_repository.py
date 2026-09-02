@@ -1,10 +1,8 @@
-from typing import Optional
 from uuid import UUID
 
 from sqlmodel import Session, select
 
 from app.models.appointment import Appointment
-
 
 class AppointmentRepository:
     def __init__(self, session: Session):
@@ -20,13 +18,13 @@ class AppointmentRepository:
         statement = select(Appointment).where(Appointment.id == appointment_id)
         return self.session.exec(statement).first()
 
-    def find_by_patient_id(self, patient_id: UUID) -> list[Appointment]:
+    def find_by_patient_id(self, patient_id: UUID):
         statement = select(Appointment).where(Appointment.patient_id == patient_id)
-        return list(self.session.exec(statement).all())
+        return self.session.exec(statement).all()
 
-    def find_by_doctor_id(self, doctor_id: UUID) -> list[Appointment]:
+    def find_by_doctor_id(self, doctor_id: UUID):
         statement = select(Appointment).where(Appointment.doctor_id == doctor_id)
-        return list(self.session.exec(statement).all())
+        return self.session.exec(statement)
 
     def find_by_doctor_datetime(self, doctor_id: UUID, appointment_datetime):
         statement = select(Appointment).where(
