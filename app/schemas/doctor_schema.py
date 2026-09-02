@@ -1,13 +1,13 @@
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 from app.models.user_role import UserRole
 
 
 class DoctorCreate(BaseModel):
     fullname: str
-    email: str
+    email: EmailStr
     password: str
     phone: str
     specialization: str
@@ -17,8 +17,17 @@ class DoctorCreate(BaseModel):
 class DoctorResponse(BaseModel):
     id: UUID
     fullname: str
-    email: str
+    email: EmailStr
     phone: str
     specialization: str
     department: str
     role: UserRole
+
+class DoctorRead(BaseModel):
+    user_id: UUID
+    fullname: str
+    email: EmailStr
+    password: str
+    phone: str
+    specialization: str
+    department: str
