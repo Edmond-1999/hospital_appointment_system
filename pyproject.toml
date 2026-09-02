@@ -17,3 +17,6 @@ dependencies = [
     "test-engine>=0.0.3",
     "uvicorn[standard]>=0.52.4",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
