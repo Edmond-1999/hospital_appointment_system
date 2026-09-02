@@ -28,7 +28,7 @@ class AppointmentRepository:
         statement = select(Appointment).where(Appointment.doctor_id == doctor_id)
         return list(self.session.exec(statement).all())
 
-    def find_by_doctor_datetime(self, doctor_id: UUID, appointment_datetime) -> Optional[Appointment]:
+    def find_by_doctor_datetime(self, doctor_id: UUID, appointment_datetime):
         statement = select(Appointment).where(
             Appointment.doctor_id == doctor_id,
             Appointment.appointment_datetime == appointment_datetime,
