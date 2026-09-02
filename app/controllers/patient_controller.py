@@ -16,9 +16,9 @@ def register_patient(data: PatientCreate, service: PatientService = Depends(get_
         raise HTTPException(status_code=400, detail=str(error))
 
 @router.post("/{patient_id}/appointments", response_model=BookAppointmentResponse)
-def book_appointment(patient_id: UUID, appointment_data: BookAppointmentRequest,  service: PatientService = Depends(get_patient_service)):
-
-    return service.book_appointment(patient_id, appointment_data.department_id, appointment_data.appointment_datetime)
+def book_appointment(patient_id: UUID, appointment_data: BookAppointmentRequest, service: PatientService = Depends(get_patient_service)):
+    return service.book_appointment(patient_id, appointment_data.department_name, appointment_data.appointment_datetime, appointment_data.description,
+    )
 
 @router.get("/{patient_id}/appointments")
 def view_appointments(patient_id: UUID, service: PatientService = Depends(get_patient_service)):

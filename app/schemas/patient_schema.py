@@ -2,8 +2,6 @@ from datetime import date
 from uuid import UUID
 from pydantic import BaseModel, EmailStr, Field
 
-from app.models.user_role import UserRole
-
 
 class PatientCreate(BaseModel):
     fullname: str

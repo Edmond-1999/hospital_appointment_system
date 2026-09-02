@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional
 from uuid import UUID
 
 
@@ -18,7 +18,7 @@ class DoctorRepository:
         return doctor
 
     def find_by_id(self, doctor_id: UUID) -> Optional[Doctor]:
-        statement = select(Doctor).where(Doctor.id == doctor_id)
+        statement = select(Doctor).where(Doctor.user_id == doctor_id)
         return self.session.exec(statement).first()
 
     def find_by_email(self, email: str) -> Optional[Doctor]:
@@ -34,5 +34,10 @@ class DoctorRepository:
 
     def delete(self, doctor):
         pass
+
+
+    def find_by_specialty(self, specialty: str) -> list[Doctor]:
+        statement = select(Doctor).where(Doctor.specialization == specialty)
+        return list(self.session.exec(statement).all())
 
 

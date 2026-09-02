@@ -7,8 +7,7 @@ from app.models.appointment_status import AppointmentStatus
 
 class BookAppointmentRequest(BaseModel):
 
-    department_id: UUID
-    department:str
+    department_name: str
     description:str
     appointment_datetime: datetime
 
@@ -18,7 +17,7 @@ class BookAppointmentResponse(BaseModel):
     patient_id: UUID
     doctor_id: UUID
     doctor_name: str
-    department: str
+    department_name: str
     description: str
     appointment_datetime: datetime
     status: AppointmentStatus

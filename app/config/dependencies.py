@@ -11,6 +11,7 @@ from app.repositories.doctor_repository import DoctorRepository
 
 from app.services.admin_service import AdminService
 from app.services.auth_service import AuthService
+from app.services.doctor_service import DoctorService
 from app.services.patient_service import PatientService
 from app.services.appointment_service import AppointmentService
 
@@ -22,8 +23,9 @@ def get_auth_service(session: Session = Depends(get_session)) -> AuthService:
     return AuthService(UserRepository(session))
 
 def get_appointment_service(session: Session = Depends(get_session)) -> AppointmentService:
-    appointment_service = AppointmentRepository(session)
-    return AppointmentService(appointment_service)
+    appointment_repository = AppointmentRepository(session)
+    doctor_repository = DoctorRepository(session)
+    return AppointmentService(appointment_repository, doctor_repository)
 
 def get_patient_service(
         session: Session = Depends(get_session),
@@ -44,3 +46,9 @@ def get_admin_service(
     return AdminService(
         user_repository, admin_repository, patient_repository, doctor_repository, appointment_service
     )
+
+def get_doctor_service(session: Session = Depends(get_session)):
+    appointment_repository = AppointmentRepository(session)
+    doctor_repository = DoctorRepository(session)
+    appointment_service = AppointmentService(appointment_repository, doctor_repository)
+    return DoctorService(appointment_service)

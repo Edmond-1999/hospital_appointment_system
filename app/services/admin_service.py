@@ -65,7 +65,7 @@ class AdminService:
         ]
 
     def view_patient_appointments(self, patient_id: UUID):
-        return self.appointment_service.get_patient_appointments(patient_id)
+        return self.appointment_service.get_appointments_status(patient_id)
 
     # app/services/admin_service.py
     def delete_user(self, user_id: UUID) -> DeleteUserResponse:
