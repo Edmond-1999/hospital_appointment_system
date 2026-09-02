@@ -1,6 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 
+from app.models import appointment
 from app.models.appointment import Appointment
 from app.models.appointment_status import AppointmentStatus
 from app.repositories.appointment_repository import AppointmentRepository
@@ -46,7 +47,12 @@ class AppointmentService:
         return self.appointment_repository.update(appointment)
 
     def view_doctor_appointments(self, doctor_id):
-        pass
+        return self.appointment_repository.find_by_doctor_datetime(doctor_id)
 
     def change_status(self, appointment_id, status):
-        pass
+        appointment = self.appointment_repository.find_by_id(appointment_id)
+        if appointment is None:
+            raise ValueError(f"No appointment with id {appointment_id}")
+
+        appointment.status = status
+        return self.appointment_repository.update(appointment)
