@@ -9,7 +9,7 @@ class UserRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def save(self, user: User) -> User:
+    def create(self, user: User) -> User:
         self.session.add(user)
         self.session.commit()
         self.session.refresh(user)
@@ -26,18 +26,13 @@ class UserRepository:
     def exists_by_email(self, email):
         return self.find_by_email(email) is not None
 
-    # def find_all(self, user: User) -> list[User]:
-    #     return user
-    #
-    # def count(self) -> int:
-    #     user = self.find_all('user')
-    #     return len(user)
+    def find_all(self) -> list[User]:
+        statement = select(User)
+        return list(self.session.exec(statement).all())
 
-    def create(self, user):
-        self.session.add(user)
+    def delete(self, user: User) -> None:
+        self.session.delete(user)
         self.session.commit()
-        self.session.refresh(user)
-        return user
 
 
 

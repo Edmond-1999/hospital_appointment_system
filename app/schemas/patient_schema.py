@@ -1,5 +1,5 @@
+from datetime import date
 from uuid import UUID
-
 from pydantic import BaseModel, EmailStr, Field
 
 from app.models.user_role import UserRole
@@ -10,11 +10,15 @@ class PatientCreate(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=15)
     phone: str
+    date_of_birth: date
+    gender: str
+    address: str
 
-
-class PatientResponse(BaseModel):
-    id: UUID
+class PatientRead(BaseModel):
+    user_id: UUID
     fullname: str
-    email: str
+    email: EmailStr
     phone: str
-    role: UserRole
+    date_of_birth: date
+    gender: str
+    address: str
