@@ -11,6 +11,12 @@ class DoctorRepository:
     def __init__(self, session: Session):
         self.session = session
 
+    def create(self, doctor: Doctor) -> Doctor:
+        self.session.add(doctor)
+        self.session.commit()
+        self.session.refresh(doctor)
+        return doctor
+
     def save(self, doctor: Doctor):
         self.session.add(doctor)
         self.session.commit()
