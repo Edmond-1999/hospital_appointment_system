@@ -1,7 +1,6 @@
 from datetime import datetime
 from uuid import UUID
 
-from app.models import appointment
 from app.models.appointment import Appointment
 from app.models.appointment_status import AppointmentStatus
 from app.repositories.appointment_repository import AppointmentRepository

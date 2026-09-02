@@ -50,5 +50,6 @@ def get_admin_service(
 def get_doctor_service(session: Session = Depends(get_session)):
     appointment_repository = AppointmentRepository(session)
     doctor_repository = DoctorRepository(session)
+    user_repository = UserRepository(session)
     appointment_service = AppointmentService(appointment_repository, doctor_repository)
-    return DoctorService(appointment_service)
+    return DoctorService(appointment_service, user_repository, doctor_repository)
