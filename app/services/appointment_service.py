@@ -28,7 +28,7 @@ class AppointmentService:
 
         raise ValueError("No doctor is available at this time")
 
-    def get_patient_appointments(self, patient_id: UUID) -> list[Appointment]:
+    def get_appointments_status(self, patient_id: UUID) -> list[Appointment]:
         return self.appointment_repository.find_by_patient(patient_id)
 
     def cancel_appointment(self, appointment_id: UUID, user_id: UUID) -> None:
@@ -43,31 +43,8 @@ class AppointmentService:
 
         self.appointment_repository.update(appointment_id, appointment)
 
-    def confirm_appointment(self, appointment_id: UUID, doctor_id: UUID) -> None:
-        appointment = self.appointment_repository.find_by_id(appointment_id)
 
-        if appointment is None:
-            raise ValueError(f"No appointment with id {appointment_id}")
 
-        if appointment.doctor_id != doctor_id:
-            raise ValueError(f"You can't confirm an appointment with id {appointment_id}")
-
-        appointment.confirm()
-
-        self.appointment_repository.update(appointment_id, appointment)
-
-    def complete_appointment(self, appointment_id: UUID, doctor_id: UUID) -> None:
-        appointment = self.appointment_repository.find_by_id(appointment_id)
-
-        if appointment is None:
-            raise ValueError(f"No appointment with id {appointment_id}")
-
-        if appointment.doctor_id != doctor_id:
-            raise ValueError(f"You can't complete an appointment with id {appointment_id}")
-
-        appointment.complete()
-
-        self.appointment_repository.update(appointment_id, appointment)
     
     
     
