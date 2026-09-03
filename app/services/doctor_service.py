@@ -40,7 +40,7 @@ class DoctorService:
         self.doctor_repository.create(doctor)
 
         return DoctorRead(
-            user_id=doctor.id,
+            user_id=doctor.user_id,
             fullname = user.fullname,
             email = user.email,
             phone = user.phone,
@@ -53,7 +53,7 @@ class DoctorService:
 
 
     def view_appointments(self, doctor_id: UUID):
-        return self.appointment_service.view_doctor_appointments(doctor_id)
+        return self.appointment_service.get_doctor_appointments(doctor_id)
 
 
     def change_status(self, appointment_id: UUID,status: str):
