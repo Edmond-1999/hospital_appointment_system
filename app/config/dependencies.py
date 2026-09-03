@@ -25,7 +25,8 @@ def get_auth_service(session: Session = Depends(get_session)) -> AuthService:
 def get_appointment_service(session: Session = Depends(get_session)) -> AppointmentService:
     appointment_repository = AppointmentRepository(session)
     doctor_repository = DoctorRepository(session)
-    return AppointmentService(appointment_repository, doctor_repository)
+    user_repository = UserRepository(session)
+    return AppointmentService(appointment_repository, doctor_repository, user_repository)
 
 def get_patient_service(
         session: Session = Depends(get_session),
@@ -35,21 +36,14 @@ def get_patient_service(
     patient_repository = PatientRepository(session)
     return PatientService(user_repository, patient_repository, appointment_service)
 
+def get_doctor_service(
+    session: Session = Depends(get_session),
+    appointment_service: AppointmentService = Depends(get_appointment_service),
+) -> DoctorService:
+    return DoctorService(UserRepository(session), DoctorRepository(session), appointment_service)
+
 def get_admin_service(
     session: Session = Depends(get_session),
     appointment_service: AppointmentService = Depends(get_appointment_service),
 ) -> AdminService:
-    user_repository = UserRepository(session)
-    admin_repository = AdminRepository(session)
-    patient_repository = PatientRepository(session)
-    doctor_repository = DoctorRepository(session)
-    return AdminService(
-        user_repository, admin_repository, patient_repository, doctor_repository, appointment_service
-    )
-
-def get_doctor_service(session: Session = Depends(get_session)):
-    appointment_repository = AppointmentRepository(session)
-    doctor_repository = DoctorRepository(session)
-    user_repository = UserRepository(session)
-    appointment_service = AppointmentService(appointment_repository, doctor_repository)
-    return DoctorService(appointment_service, user_repository, doctor_repository)
+    return AdminService(UserRepository(session), AdminRepository(session), PatientRepository(session), DoctorRepository(session), appointment_service)
