@@ -1,4 +1,5 @@
 .env
+.env.access
 __pycache__/
 *.py[cod]
 .idea/hospital-appointment-system.iml

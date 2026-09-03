@@ -24,10 +24,10 @@ class DoctorResponse(BaseModel):
     role: UserRole
 
 class DoctorRead(BaseModel):
-    user_id = UUID
-    fullname = str
-    email = EmailStr
-    phone = str
-    password = str
-    specialization = str
-    department = str
+    user_id: UUID
+    fullname: str
+    email: EmailStr
+    phone: str
+    password: str
+    specialization: str
+    department: str
