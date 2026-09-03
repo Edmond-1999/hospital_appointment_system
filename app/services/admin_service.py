@@ -1,5 +1,7 @@
+from datetime import datetime
 from uuid import UUID
 
+from app.models.appointment import Appointment
 from app.repositories.user_repository import UserRepository
 from app.repositories.admin_repository import AdminRepository
 from app.repositories.patient_repository import PatientRepository
@@ -32,42 +34,54 @@ class AdminService:
             raise ValueError("User already exists")
 
         user = User(
-            fullname=data.fullname,
-            email=data.email,
-            phone=data.phone,
-            password=data.password,
-            role=UserRole.ADMIN,
+            fullname = data.fullname,
+            email = data.email,
+            phone = data.phone,
+            password = data.password,
+            role = UserRole.ADMIN,
         )
         self.user_repository.create(user)
 
-        admin = Admin(user_id=user.id, department=data.department)
+        admin = Admin(
+            user_id = user.id,
+            department = data.department
+        )
         self.admin_repository.create(admin)
 
         return AdminRead(
-            user_id=admin.user_id,
-            fullname=user.fullname,
-            email=user.email,
-            phone=user.phone,
-            department=admin.department,
+            user_id = admin.user_id,
+            fullname = user.fullname,
+            email = user.email,
+            phone = user.phone,
+            department = admin.department,
         )
 
     def list_all_users(self) -> list[UserSummary]:
         users = self.user_repository.find_all()
         return [
             UserSummary(
-                id=user.id,
-                fullname=user.fullname,
-                email=user.email,
-                phone=user.phone,
-                role=user.role.value,
+                id = user.id,
+                fullname = user.fullname,
+                email = user.email,
+                phone = user.phone,
+                role = user.role.value,
             )
             for user in users
         ]
 
-    def view_patient_appointments(self, patient_id: UUID):
-        return self.appointment_service.get_appointments_status(patient_id)
+    def view_patient_appointments(self, patient_id: UUID) -> list[Appointment]:
+        return self.appointment_service.get_patient_appointments(patient_id)
 
-    # app/services/admin_service.py
+    def book_appointment_for_patient(self, patient_id: UUID, department: str, appointment_datetime: datetime,
+                                     description: str) -> Appointment:
+        return self.appointment_service.create_appointment(patient_id, department, appointment_datetime, description)
+
+    def view_all_appointments(self) -> list:
+        return self.appointment_service.get_all_appointments()
+
+    def cancel_appointment(self, appointment_id: UUID) -> Appointment:
+        return self.appointment_service.cancel_appointment(appointment_id)
+
     def delete_user(self, user_id: UUID) -> DeleteUserResponse:
         user = self.user_repository.find_by_id(user_id)
         if user is None:
@@ -92,8 +106,8 @@ class AdminService:
         self.user_repository.delete(user)
 
         return DeleteUserResponse(
-            id=deleted_id,
-            fullname=deleted_fullname,
+            id = deleted_id,
+            fullname = deleted_fullname,
             message=f"User '{deleted_fullname}' was successfully deleted",
         )
 

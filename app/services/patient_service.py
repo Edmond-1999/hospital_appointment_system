@@ -1,5 +1,7 @@
 from datetime import datetime
 from uuid import UUID
+
+from app.models.appointment import Appointment
 from app.repositories.user_repository import UserRepository
 from app.repositories.patient_repository import PatientRepository
 from app.services.appointment_service import AppointmentService
@@ -19,37 +21,37 @@ class PatientService:
             raise ValueError("User already exists")
 
         user = User(
-            fullname=data.fullname,
-            email=data.email,
-            phone=data.phone,
-            password=data.password,
-            role=UserRole.PATIENT,
+            fullname = data.fullname,
+            email = data.email,
+            phone = data.phone,
+            password = data.password,
+            role = UserRole.PATIENT,
         )
         self.user_repository.create(user)
 
         patient = Patient(
-            user_id=user.id,
-            date_of_birth=data.date_of_birth,
-            gender=data.gender,
-            address=data.address,
+            user_id = user.id,
+            date_of_birth = data.date_of_birth,
+            gender = data.gender,
+            address = data.address,
         )
         self.patient_repository.create(patient)
 
         return PatientRead(
-            user_id=patient.user_id,
-            fullname=user.fullname,
-            email=user.email,
-            phone=user.phone,
-            date_of_birth=patient.date_of_birth,
-            gender=patient.gender,
-            address=patient.address,
+            user_id = patient.user_id,
+            fullname = user.fullname,
+            email = user.email,
+            phone = user.phone,
+            date_of_birth = patient.date_of_birth,
+            gender = patient.gender,
+            address = patient.address,
         )
 
-    def book_appointment(self, patient_id: UUID, department_name: str, appointment_datetime: datetime, description: str):
-        return self.appointment_service.create_appointment(patient_id, department_name, appointment_datetime, description)
+    def book_appointment(self, patient_id: UUID, department: str, appointment_datetime: datetime, description: str):
+        return self.appointment_service.create_appointment(patient_id, department, appointment_datetime, description)
 
-    def view_appointments(self, patient_id: UUID):
-        return self.appointment_service.get_appointments_status(patient_id)
-
-    def cancel_appointment(self, patient_id: UUID, appointment_id: UUID):
+    def cancel_appointment(self, patient_id: UUID, appointment_id: UUID) -> Appointment:
         return self.appointment_service.cancel_appointment(appointment_id, patient_id)
+
+    def view_appointments(self, patient_id: UUID) -> list:
+        return self.appointment_service.get_patient_appointments(patient_id)

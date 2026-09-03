@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from app.models.appointment_status import AppointmentStatus
 from app.models.doctor import Doctor
 from app.models.user import User
 from app.models.user_role import UserRole
@@ -11,22 +12,21 @@ from app.services.appointment_service import AppointmentService
 
 class DoctorService:
 
-    def __init__(self, appointment_service: AppointmentService, user_repository: UserRepository, doctor_repository: DoctorRepository):
-        self.appointment_service = appointment_service
+    def __init__(self, user_repository: UserRepository, doctor_repository: DoctorRepository, appointment_service: AppointmentService):
         self.user_repository = user_repository
         self.doctor_repository = doctor_repository
-
+        self.appointment_service = appointment_service
 
     def register(self, data: DoctorCreate) -> DoctorRead:
         if self.user_repository.find_by_email(data.email):
             raise ValueError("Doctor already exists")
 
         user = User(
-            fullname=data.fullname,
-            email=data.email,
-            phone=data.phone,
-            password=data.password,
-            role=UserRole.DOCTOR,
+            fullname = data.fullname,
+            email = data.email,
+            phone = data.phone,
+            password = data.password,
+            role = UserRole.DOCTOR,
         )
 
         self.user_repository.create(user)
@@ -50,9 +50,8 @@ class DoctorService:
             department = doctor.department
         )
 
-    def view_appointments(self, doctor_id: UUID):
-        return self.appointment_service.view_doctor_appointments(doctor_id)
+    def view_appointments(self, doctor_id: UUID) -> list:
+        return self.appointment_service.get_doctor_appointments(doctor_id)
 
-
-    def change_status(self, appointment_id: UUID,status: str):
-        return self.appointment_service.change_status(appointment_id,status)
+    def change_status(self, doctor_id: UUID, appointment_id: UUID, status: AppointmentStatus):
+        return self.appointment_service.change_status(appointment_id, doctor_id, status)

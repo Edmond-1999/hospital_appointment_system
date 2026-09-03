@@ -1,8 +1,8 @@
 from uuid import UUID
 
 from sqlmodel import Session, select
-
 from app.models.appointment import Appointment
+
 
 class AppointmentRepository:
     def __init__(self, session: Session):
@@ -38,3 +38,6 @@ class AppointmentRepository:
         self.session.commit()
         self.session.refresh(appointment)
         return appointment
+
+    def find_all(self) -> list[Appointment]:
+        return list(self.session.exec(select(Appointment)).all())
