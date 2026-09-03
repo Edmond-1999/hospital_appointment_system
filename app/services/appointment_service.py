@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 from app.models.appointment import Appointment
@@ -64,7 +63,7 @@ class AppointmentService:
 
         return self.appointment_repository.update(appointment)
 
-    def cancel_appointment(self, appointment_id: UUID, patient_id: Optional[UUID] = None) -> Appointment:
+    def cancel_appointment(self, appointment_id: UUID, patient_id: UUID) -> Appointment:
         appointment = self.appointment_repository.find_by_id(appointment_id)
         if appointment is None:
             raise ValueError(f"No appointment with id {appointment_id}")
