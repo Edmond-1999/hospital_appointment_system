@@ -1,12 +1,8 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, status, HTTPException
-from sqlmodel import Session
-
-from app.repositories.doctor_repository import DoctorRepository
-from app.repositories.appointment_repository import AppointmentRepository
+from app.schemas.appointment_schema import BookAppointmentResponse, ChangeAppointmentStatusRequest
 from app.schemas.doctor_schema import DoctorRead, DoctorCreate
-from app.services.appointment_service import AppointmentService
 from app.services.doctor_service import DoctorService
 from app.config.dependencies import get_doctor_service
 from app.config.security import require_doctor_owner

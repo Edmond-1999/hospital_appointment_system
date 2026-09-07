@@ -69,7 +69,7 @@ class AdminService:
             for user in users
         ]
 
-    def view_patient_appointments(self, patient_id: UUID) -> list[Appointment]:
+    def view_patient_appointments(self, patient_id: UUID) -> list:
         return self.appointment_service.get_patient_appointments(patient_id)
 
     def book_appointment_for_patient(self, patient_id: UUID, department: str, appointment_datetime: datetime,
