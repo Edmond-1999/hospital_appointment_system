@@ -1,6 +1,5 @@
 from uuid import uuid4, UUID
 from sqlmodel import SQLModel, Field as SQLField
-
 from app.models.user_role import UserRole
 
 class User(SQLModel, table=True):
@@ -10,3 +9,4 @@ class User(SQLModel, table=True):
     phone: str = SQLField(...)
     password: str = SQLField(...)
     role: UserRole
+    is_logged_in: bool = SQLField(default=False)

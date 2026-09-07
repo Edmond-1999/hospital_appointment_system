@@ -1,6 +1,8 @@
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from app.config.dependencies import get_patient_service
+from app.config.security import require_patient_owner
+from app.models.user import User
 from app.services.patient_service import PatientService
 from app.schemas.appointment_schema import BookAppointmentResponse, BookAppointmentRequest
 from app.schemas.patient_schema import PatientCreate, PatientRead
@@ -16,7 +18,7 @@ def register_patient(data: PatientCreate, service: PatientService = Depends(get_
         raise HTTPException(status_code=400, detail=str(error))
 
 @router.post("/{patient_id}/appointments", response_model=BookAppointmentResponse)
-def book_appointment(patient_id: UUID, appointment_data: BookAppointmentRequest, service: PatientService = Depends(get_patient_service)):
+def book_appointment(patient_id: UUID, appointment_data: BookAppointmentRequest, service: PatientService = Depends(get_patient_service), _: User = Depends(require_patient_owner)):
     try:
         return service.book_appointment(patient_id, appointment_data.department, appointment_data.appointment_datetime, appointment_data.description,
         )
@@ -24,9 +26,9 @@ def book_appointment(patient_id: UUID, appointment_data: BookAppointmentRequest,
         raise HTTPException(status_code=400, detail=str(error))
 
 @router.get("/{patient_id}/appointments")
-def view_appointments(patient_id: UUID, service: PatientService = Depends(get_patient_service)):
+def view_appointments(patient_id: UUID, service: PatientService = Depends(get_patient_service), _: User = Depends(require_patient_owner)):
     return service.view_appointments(patient_id)
 
 @router.delete("/{patient_id}/appointments/{appointment_id}")
-def cancel_appointment(patient_id: UUID, appointment_id: UUID, service: PatientService = Depends(get_patient_service)):
+def cancel_appointment(patient_id: UUID, appointment_id: UUID, service: PatientService = Depends(get_patient_service), _: User = Depends(require_patient_owner)):
     return service.cancel_appointment(patient_id, appointment_id)

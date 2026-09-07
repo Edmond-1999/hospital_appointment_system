@@ -6,6 +6,8 @@ from app.schemas.appointment_schema import BookAppointmentResponse, ChangeAppoin
 from app.schemas.doctor_schema import DoctorRead, DoctorCreate
 from app.services.doctor_service import DoctorService
 from app.config.dependencies import get_doctor_service
+from app.config.security import require_doctor_owner
+from app.models.user import User
 
 router = APIRouter(prefix="/doctors", tags=["doctors"])
 
@@ -18,12 +20,12 @@ def register_doctor(data: DoctorCreate, service: DoctorService = Depends(get_doc
 
 
 @router.get("/{doctor_id}/appointments", response_model=list[BookAppointmentResponse])
-def view_appointments(doctor_id: UUID, service: DoctorService = Depends(get_doctor_service)):
+def view_appointments(doctor_id: UUID, service: DoctorService = Depends(get_doctor_service), _: User = Depends(require_doctor_owner)):
     return service.view_appointments(doctor_id)
 
 @router.patch("/{doctor_id}/appointments/{appointment_id}/status", response_model=BookAppointmentResponse)
 def change_status(doctor_id: UUID, appointment_id: UUID, data: ChangeAppointmentStatusRequest,
-                   service: DoctorService = Depends(get_doctor_service)):
+                   service: DoctorService = Depends(get_doctor_service), _: User = Depends(require_doctor_owner)):
     try:
         return service.change_status(doctor_id, appointment_id, data.status)
     except ValueError as error:

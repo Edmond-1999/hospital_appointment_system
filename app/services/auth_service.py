@@ -9,10 +9,15 @@ class AuthService:
         user = self.user_repository.find_by_email(email)
         if user is None or user.password != password:
             raise ValueError("email or password is invalid")
-        return user
+
+        user.is_logged_in = True
+        return self.user_repository.update(user)
 
     def logout(self, email: str) -> bool:
         user = self.user_repository.find_by_email(email)
         if user is None:
             raise ValueError("email or password is invalid")
+
+        user.is_logged_in = False
+        self.user_repository.update(user)
         return True
