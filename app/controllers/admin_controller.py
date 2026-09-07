@@ -5,6 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.schemas.appointment_schema import BookAppointmentResponse, AdminBookAppointmentRequest
 from app.services.admin_service import AdminService
 from app.config.dependencies import get_admin_service
+from app.config.security import require_admin
+from app.models.user import User
 from app.schemas.admin_schema import AdminCreate, AdminRead, UserSummary, DeleteUserResponse
 
 router = APIRouter(prefix="/admins", tags=["Admins"])
@@ -19,12 +21,12 @@ def register_admin(data: AdminCreate, service: AdminService = Depends(get_admin_
 
 
 @router.get("/users", response_model=list[UserSummary])
-def list_all_users(service: AdminService = Depends(get_admin_service)):
+def list_all_users(service: AdminService = Depends(get_admin_service), _: User = Depends(require_admin)):
     return service.list_all_users()
 
 
 @router.delete("/users/{user_id}", response_model=DeleteUserResponse)
-def delete_user(user_id: UUID, service: AdminService = Depends(get_admin_service)):
+def delete_user(user_id: UUID, service: AdminService = Depends(get_admin_service), _: User = Depends(require_admin)):
     try:
         return service.delete_user(user_id)
     except ValueError as error:
@@ -32,7 +34,7 @@ def delete_user(user_id: UUID, service: AdminService = Depends(get_admin_service
 
 
 @router.post("/appointments", response_model=BookAppointmentResponse, status_code=status.HTTP_201_CREATED)
-def book_appointment_for_patient(data: AdminBookAppointmentRequest, service: AdminService = Depends(get_admin_service)):
+def book_appointment_for_patient(data: AdminBookAppointmentRequest, service: AdminService = Depends(get_admin_service), _: User = Depends(require_admin)):
     try:
         return service.book_appointment_for_patient(
             data.patient_id, data.department, data.appointment_datetime, data.description
@@ -41,11 +43,11 @@ def book_appointment_for_patient(data: AdminBookAppointmentRequest, service: Adm
         raise HTTPException(status_code=400, detail=str(error))
 
 @router.get("/appointments", response_model=list[BookAppointmentResponse])
-def view_all_appointments(service: AdminService = Depends(get_admin_service)):
+def view_all_appointments(service: AdminService = Depends(get_admin_service), _: User = Depends(require_admin)):
     return service.view_all_appointments()
 
 @router.delete("/appointments/{appointment_id}", response_model=BookAppointmentResponse)
-def cancel_appointment(appointment_id: UUID, service: AdminService = Depends(get_admin_service)):
+def cancel_appointment(appointment_id: UUID, service: AdminService = Depends(get_admin_service), _: User = Depends(require_admin)):
     try:
         return service.cancel_appointment(appointment_id)
     except ValueError as error:
