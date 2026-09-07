@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-
+from fastapi.middleware.cors import CORSMiddleware
 from app.controllers.doctor_controller import router as doctor_controller
 from app.controllers.patient_controller import router as patient_controller
 from app.config.database import create_db_and_tables
@@ -18,3 +18,11 @@ app.include_router(auth_controller)
 app.include_router(patient_controller)
 app.include_router(admin_controller)
 app.include_router(doctor_controller)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
