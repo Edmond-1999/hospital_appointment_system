@@ -9,7 +9,8 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 def login(data: LoginRequest, service: AuthService = Depends(get_auth_service)):
     try:
         user = service.login(data.email, data.password)
-        return LoginResponse(message="login successful", user_id=user.id, role=user.role.value)
+        # auth_controller.py
+        return LoginResponse(message="login successful", user_id=user.id, email=user.email, role=user.role.value)
     except ValueError as error:
         raise HTTPException(status_code=404, detail=str(error))
 

@@ -8,6 +8,7 @@ class LoginRequest(BaseModel):
 class LoginResponse(BaseModel):
     message: str
     user_id: UUID
+    email: EmailStr
     role: str
 
 class LogoutRequest(BaseModel):
