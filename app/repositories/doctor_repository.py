@@ -1,9 +1,6 @@
 from typing import Optional
 from uuid import UUID
-
-
-from sqlmodel import Session, select
-
+from sqlmodel import Session, select, func, or_
 from app.models.doctor import Doctor
 
 
@@ -31,7 +28,13 @@ class DoctorRepository:
 
 
     def find_by_specialty(self, specialty: str) -> list[Doctor]:
-        statement = select(Doctor).where(Doctor.specialization == specialty)
+        term = specialty.strip().lower()
+        statement = select(Doctor).where(
+            or_(
+                func.lower(func.trim(Doctor.specialization)) == term,
+                func.lower(func.trim(Doctor.department)) == term,
+            )
+        )
         return list(self.session.exec(statement).all())
 
 
